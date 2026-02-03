@@ -1,5 +1,6 @@
 const { mockDbConnection } = require("../helpers/testHelpers");
 
+
 // Mock the config before requiring database
 jest.mock("../../config.js", () => ({
   jwtSecret: "test-secret",
