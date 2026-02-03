@@ -20,6 +20,7 @@ const mockAuthRouter = {
     }
     next();
   }),
+  setAuth: jest.fn().mockResolvedValue("mock-token"),
 };
 
 jest.mock("../../database/database.js", () => ({

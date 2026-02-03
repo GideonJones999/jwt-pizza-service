@@ -113,8 +113,8 @@ describe("Config", () => {
   });
 
   test("config has connectionTimeout", () => {
-    expect(config.db.connection.connectionTimeout).toBeDefined();
-    expect(typeof config.db.connection.connectionTimeout).toBe("number");
+    expect(config.db.connection.connectTimeout).toBeDefined();
+    expect(typeof config.db.connection.connectTimeout).toBe("number");
   });
 });
 
@@ -743,7 +743,7 @@ describe("User Route Handlers", () => {
         Admin: "admin",
       },
     }));
-    jest.doMock("../routes/authRouter.js", () => ({
+    jest.doMock("../../routes/authRouter.js", () => ({
       authRouter: mockAuthRouter,
       setAuth: jest.fn(),
     }));

@@ -35,7 +35,7 @@ const { DB, Role } = require("../../database/database");
 
 // Force the initialization to resolve immediately so it doesn't hang
 jest
-  .spyOn(DB.prototype, "initializeDatabase")
+  .spyOn(Object.getPrototypeOf(DB), "initializeDatabase")
   .mockImplementation(() => Promise.resolve());
 
 describe("Database - User Operations", () => {
@@ -186,7 +186,7 @@ describe("Database - Menu Operations", () => {
         { id: 2, title: "Pepperoni", price: 0.0042 },
       ];
 
-      mockConnection.execute.mockResolvedValueOnce([mockMenu]);
+      mockConnection.execute.mockResolvedValueOnce([mockMenu, []]);
 
       const result = await DB.getMenu();
 
