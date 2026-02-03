@@ -45,6 +45,8 @@ describe("EndpointHelper", () => {
   test("asyncHandler wraps function and returns middleware", () => {
     const fn = jest.fn((req, res, next) => {
       res.json({ success: true });
+      req;
+      next;
     });
     const middleware = asyncHandler(fn);
     const req = {};
@@ -563,9 +565,6 @@ describe("API Router Registration", () => {
 
 // Mock Database Tests
 describe("Database Operations", () => {
-  let mockConnection;
-  let DB;
-
   beforeEach(() => {
     // Clear the require cache to get fresh DB instance
     jest.resetModules();
@@ -1053,19 +1052,19 @@ describe("Router Error Handling", () => {
 
 // Database initialization
 describe("Database Module Structure", () => {
-  beforeEach(() => {
-    const database = require("../../database/database.js");
-  });
   test("database.js exports DB", () => {
+    const database = require("../../database/database.js");
     expect(database.DB).toBeDefined();
   });
 
   test("database.js exports Role", () => {
+    const database = require("../../database/database.js");
     expect(database.Role).toBeDefined();
   });
 
   test("database.js Role contains all values", () => {
-    expect(Object.keys(Role).length).toBeGreaterThanOrEqual(3);
+    const database = require("../../database/database.js");
+    expect(Object.keys(database.Role).length).toBeGreaterThanOrEqual(3);
   });
 });
 
@@ -1507,6 +1506,7 @@ describe("Express Integration", () => {
     const fn = jest.fn((r, s, n) => {
       expect(r).toBe(req);
       expect(s).toBe(res);
+      expect(n).toBe(next);
     });
 
     const middleware = asyncHandler(fn);

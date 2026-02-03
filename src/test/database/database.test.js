@@ -1,5 +1,4 @@
-const { mockDbConnection } = require("../helpers/testHelpers");
-
+// const { mockDbConnection } = require("../helpers/testHelpers");
 
 // Mock the config before requiring database
 jest.mock("../../config.js", () => ({
@@ -31,7 +30,7 @@ jest.mock("mysql2/promise", () => ({
   createConnection: jest.fn(() => Promise.resolve(mockConnection)),
 }));
 
-const mysql = require("mysql2/promise");
+// const mysql = require("mysql2/promise");
 const { DB, Role } = require("../../database/database");
 
 // Force the initialization to resolve immediately so it doesn't hang
@@ -349,7 +348,7 @@ describe("Database - Franchise Operations", () => {
         .mockResolvedValueOnce([[{ id: 2, name: "Admin2" }], []])
         .mockResolvedValueOnce([[{ id: 2, name: "Store 2" }], []]);
 
-      const [franchises, hasMore] = await DB.getFranchises(null, 1);
+      const [franchises] = await DB.getFranchises(null, 1);
 
       expect(franchises).toBeDefined();
       expect(Array.isArray(franchises)).toBe(true);
