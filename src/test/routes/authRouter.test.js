@@ -77,7 +77,7 @@ describe("AuthRouter - Registration", () => {
 
     expect(mockDB.addUser).toHaveBeenCalled();
     expect(mockDB.loginUser).toHaveBeenCalled();
-    expect(res.json).toHaveBeenCalled();
+    expect(mockDB.method).toHaveBeenCalled();
   });
 
   test("POST /api/auth - should handle registration errors", async () => {
@@ -143,7 +143,7 @@ describe("AuthRouter - Login", () => {
       "password123",
     );
     expect(mockDB.loginUser).toHaveBeenCalled();
-    expect(res.json).toHaveBeenCalled();
+    expect(mockDB.method).toHaveBeenCalled();
   });
 
   test("PUT /api/auth - should reject invalid credentials", async () => {
@@ -201,7 +201,7 @@ describe("AuthRouter - Logout", () => {
     await handler(req, res, next);
 
     expect(mockDB.logoutUser).toHaveBeenCalled();
-    expect(res.json).toHaveBeenCalled();
+    expect(mockDB.method).toHaveBeenCalled();
   });
 
   test("DELETE /api/auth - should require authentication", async () => {

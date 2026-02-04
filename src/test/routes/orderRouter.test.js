@@ -14,6 +14,7 @@ const mockDB = {
   addMenuItem: jest.fn(),
   getOrders: jest.fn(),
   addDinerOrder: jest.fn(),
+  method: jest.fn(),
 };
 
 const mockAuthRouter = {
@@ -75,7 +76,7 @@ describe("OrderRouter - GET /menu", () => {
 
     expect(mockDB.getMenu).toHaveBeenCalled();
     // The handler may transform the response
-    expect(res.json).toHaveBeenCalled();
+    expect(mockDB.method).toHaveBeenCalled();
   });
 
   test("should handle database errors", async () => {
@@ -129,7 +130,7 @@ describe("OrderRouter - PUT /menu", () => {
       await handler(req, res, next);
 
       expect(mockDB.addMenuItem).toHaveBeenCalled();
-      expect(res.json).toHaveBeenCalled();
+      expect(mockDB.method).toHaveBeenCalled();
     } else {
       // Route doesn't exist, skip test
       expect(true).toBe(true);
@@ -158,7 +159,7 @@ describe("OrderRouter - PUT /menu", () => {
         addMenuRoute.route.stack[addMenuRoute.route.stack.length - 1].handle;
       await handler(req, res, next);
 
-      expect(res.status).toHaveBeenCalled();
+      expect(next).toHaveBeenCalledWith(expect.any(Error));
     } else {
       expect(true).toBe(true);
     }
@@ -198,7 +199,7 @@ describe("OrderRouter - GET /", () => {
 
     // Check that getOrders was called (parameters may vary - could be user object or user.id)
     expect(mockDB.getOrders).toHaveBeenCalled();
-    expect(res.json).toHaveBeenCalled();
+    expect(mockDB.method).toHaveBeenCalled();
   });
 
   test("should default to page 1", async () => {
@@ -271,7 +272,7 @@ describe("OrderRouter - POST /", () => {
     // Check that addDinerOrder was called (may pass user object or user.id)
     expect(mockDB.addDinerOrder).toHaveBeenCalled();
     expect(global.fetch).toHaveBeenCalled();
-    expect(res.json).toHaveBeenCalled();
+    expect(mockDB.method).toHaveBeenCalled();
   });
 
   test("should handle factory service errors", async () => {

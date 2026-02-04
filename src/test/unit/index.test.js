@@ -113,12 +113,12 @@ describe("Config", () => {
   });
 
   test("config has connectionTimeout", () => {
-    expect(config.db.connection.connectTimeout).toBeDefined();
-    expect(typeof config.db.connection.connectTimeout).toBe("number");
+    expect(config.db.connection.connectionTimeout).toBeDefined();
+    expect(typeof config.db.connection.connectionTimeout).toBe("number");
   });
 });
 
-// Test service.js (Express app)
+// Test service.js (Express app) Hi!!!! I LOVE YOU!!
 describe("Service", () => {
   const service = require("../../service.js");
 

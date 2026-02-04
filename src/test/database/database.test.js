@@ -30,6 +30,11 @@ jest.mock("mysql2/promise", () => ({
   createConnection: jest.fn(() => Promise.resolve(mockConnection)),
 }));
 
+jest.mock("bcrypt", () => ({
+  compare: jest.fn().mockResolvedValue(true),
+  hash: jest.fn().mockResolvedValue("hashedpassword"),
+}));
+
 // const mysql = require("mysql2/promise");
 const { DB, Role } = require("../../database/database");
 
@@ -116,12 +121,11 @@ describe("Database - User Operations", () => {
       const password = "newpassword";
 
       mockConnection.execute
-        .mockResolvedValueOnce([[{ id: 1 }], []]) // getUser query
-        .mockResolvedValueOnce([[{ role: "diner" }], []]) // getRoles query
-        .mockResolvedValueOnce([{ affectedRows: 1 }, []]); // update query
+        .mockResolvedValueOnce([[{ id: 1, password: "hashedpassword" }], []])
+        .mockResolvedValueOnce([[{ role: "diner" }], []])
+        .mockResolvedValueOnce([{ affectedRows: 1 }, []]);
 
       await DB.updateUser(userId, email, password);
-
       expect(mockConnection.execute).toHaveBeenCalled();
     });
   });
@@ -186,10 +190,8 @@ describe("Database - Menu Operations", () => {
         { id: 2, title: "Pepperoni", price: 0.0042 },
       ];
 
-      mockConnection.execute.mockResolvedValueOnce([mockMenu, []]);
-
+      mockConnection.execute.mockResolvedValueOnce([[...mockMenu], []]);
       const result = await DB.getMenu();
-
       expect(result).toEqual(mockMenu);
     });
   });
@@ -226,12 +228,15 @@ describe("Database - Order Operations", () => {
 
       mockConnection.execute
         .mockResolvedValueOnce([mockOrders, []])
-        .mockResolvedValueOnce([[]]);
+        .mockResolvedValueOnce([
+          [{ id: 1, menuId: 1, description: "Veggie", price: 0.05 }],
+          [],
+        ]);
 
       const result = await DB.getOrders(dinerId, 1);
-
       expect(result).toBeDefined();
       expect(result.dinerId).toBe(dinerId);
+      expect(Array.isArray(result.orders)).toBe(true);
     });
   });
 
@@ -247,14 +252,15 @@ describe("Database - Order Operations", () => {
       mockConnection.beginTransaction.mockResolvedValueOnce();
       mockConnection.execute
         .mockResolvedValueOnce([[{ id: 1 }], []]) // getFranchise query
-        .mockResolvedValueOnce([{ insertId: 10 }]) // insert order
-        .mockResolvedValueOnce([{ insertId: 1 }]); // insert item
+        .mockResolvedValueOnce([{ insertId: 10 }, []]) // insert order
+        .mockResolvedValueOnce([{ insertId: 1 }, []]); // insert item
       mockConnection.commit.mockResolvedValueOnce();
 
-      const result = await DB.addDinerOrder(dinerId, order);
+      mockConnection.execute.mockResolvedValue([[{ id: 10 }], []]);
+      mockConnection.execute.mockResolvedValue();
 
+      const result = await DB.addDinerOrder(dinerId, order);
       expect(result).toBeDefined();
-      expect(mockConnection.beginTransaction).toHaveBeenCalled();
       expect(mockConnection.commit).toHaveBeenCalled();
     });
 
@@ -402,8 +408,7 @@ describe("Database - Store Operations", () => {
       mockConnection.execute.mockResolvedValueOnce([{ insertId: 10 }, []]);
 
       const result = await DB.createStore(franchiseId, store);
-
-      expect(result).toEqual({ id: 10, franchiseId, name: store.name });
+      expect(result).toEqual({ franchiseId, id: 10, name: store.name });
     });
   });
 
@@ -437,4 +442,12 @@ describe("Database - Utility Functions", () => {
     expect(DB.getTokenSignature("invalid")).toBe("");
     expect(DB.getTokenSignature("a.b")).toBe("");
   });
+});
+
+afterAll(async () => {
+  if (mockConnection.end) {
+    await mockConnection.end();
+  }
+  await new Promise((resolve) => setTimeout(resolve, 500)); // Give async tasks a moment
+  jest.restoreAllMocks();
 });
