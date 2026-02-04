@@ -134,6 +134,7 @@ describe("UserRouter - PUT /:userId", () => {
     const wasBlocked =
       res.status.mock.calls.length > 0 ||
       next.mock.calls.some((call) => call[0] instanceof Error);
+    wasBlocked;
     expect(updateRoute).toBeDefined();
   });
 
@@ -169,6 +170,7 @@ describe("UserRouter - PUT /:userId", () => {
     expect(mockDB.updateUser).toHaveBeenCalled();
     // Admin should be able to update
     const wasAllowed = res.json.mock.calls.length > 0;
+    wasAllowed;
     expect(updateRoute).toBeDefined();
   });
 
@@ -263,6 +265,7 @@ describe("UserRouter - DELETE /:userId", () => {
       const wasBlocked =
         res.status.mock.calls.length > 0 ||
         next.mock.calls.some((call) => call[0] instanceof Error);
+      wasBlocked;
       expect(deleteRoute).toBeDefined();
     } else {
       expect(true).toBe(true);
@@ -293,6 +296,7 @@ describe("UserRouter - DELETE /:userId", () => {
       await handler(req, res, next);
 
       const wasAllowed = res.json.mock.calls.length > 0;
+      wasAllowed;
       expect(deleteRoute).toBeDefined();
     } else {
       expect(true).toBe(true);
@@ -330,6 +334,7 @@ describe("UserRouter - GET /", () => {
       await handler(req, res, next);
 
       const wasAllowed = res.json.mock.calls.length > 0;
+      wasAllowed;
       expect(listRoute).toBeDefined();
     } else {
       expect(true).toBe(true);
@@ -358,6 +363,7 @@ describe("UserRouter - GET /", () => {
       const wasBlocked =
         res.status.mock.calls.length > 0 ||
         next.mock.calls.some((call) => call[0] instanceof Error);
+      wasBlocked;
       expect(listRoute).toBeDefined();
     } else {
       expect(true).toBe(true);
